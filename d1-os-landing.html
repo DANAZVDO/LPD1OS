@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D1 OS — Lista de Espera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================== TOKENS ===================== */
+    :root {
+      --bg:          #080808;
+      --bg-2:        #111111;
+      --bg-3:        #1A1A1A;
+      --bg-4:        #242424;
+      --gold:        #C9A84C;
+      --gold-a15:    rgba(201,168,76,.15);
+      --gold-a08:    rgba(201,168,76,.08);
+      --gold-a20:    rgba(201,168,76,.20);
+      --ruby:        #C41E3A;
+      --ruby-a15:    rgba(196,30,58,.15);
+      --white:       #F5F0E8;
+      --white-a60:   rgba(245,240,232,.60);
+      --white-a15:   rgba(245,240,232,.15);
+      --white-a06:   rgba(245,240,232,.06);
+      --green:       #4CAF50;
+      --r-sm:   6px;
+      --r-md:  12px;
+      --r-lg:  20px;
+      --ease:  .2s ease;
+    }
+
+    /* ===================== RESET ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== GRID TEXTURE ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,.028) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===================== LAYOUT ===================== */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--white-a15), transparent); }
+
+    /* ===================== NAV ===================== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 0;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--white-a15);
+      background: rgba(8,8,8,.80);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800;
+      letter-spacing: -.02em; color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-tag {
+      font-size: .72rem; color: var(--white-a60);
+      background: var(--white-a06); border: 1px solid var(--white-a15);
+      padding: 5px 12px; border-radius: 100px; letter-spacing: .06em;
+    }
+    .nav-cta {
+      background: var(--gold); color: var(--bg);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem;
+      padding: 10px 22px; border-radius: var(--r-sm); text-decoration: none;
+      letter-spacing: .01em; transition: opacity var(--ease);
+    }
+    .nav-cta:hover { opacity: .82; }
+
+    /* ===================== HERO ===================== */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 120px 0 80px; position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: 30%; left: -10%; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+
+    /* eyebrow pill */
+    .eyebrow-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .72rem; font-weight: 500; letter-spacing: .11em;
+      text-transform: uppercase; color: var(--gold);
+      background: var(--gold-a08); border: 1px solid var(--gold-a20);
+      padding: 6px 14px; border-radius: 100px; margin-bottom: 24px;
+    }
+    .eyebrow-pulse {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .4; transform: scale(.65); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 3.8vw, 3.5rem);
+      font-weight: 800; line-height: 1.07; letter-spacing: -.035em;
+      margin-bottom: 22px;
+    }
+    .gold { color: var(--gold); }
+    .ruby { color: var(--ruby); }
+
+    .hero-sub {
+      font-size: 1.02rem; color: var(--white-a60); line-height: 1.72;
+      margin-bottom: 38px; max-width: 480px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold); color: var(--bg);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .97rem;
+      padding: 15px 30px; border-radius: var(--r-sm); text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 36px rgba(201,168,76,.28);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .hero-note { font-size: .8rem; color: var(--white-a60); }
+
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 52px; padding-top: 36px;
+      border-top: 1px solid var(--white-a15);
+    }
+    .stat-val {
+      font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;
+      color: var(--gold); letter-spacing: -.04em; line-height: 1;
+    }
+    .stat-lbl {
+      font-size: .74rem; color: var(--white-a60); text-transform: uppercase;
+      letter-spacing: .08em; margin-top: 4px;
+    }
+
+    /* ===== TERMINAL ===== */
+    .terminal {
+      background: var(--bg-2); border: 1px solid var(--gold-a20); border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(201,168,76,.06), 0 40px 80px rgba(0,0,0,.55);
+    }
+    .term-head {
+      background: var(--bg-3); padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--white-a15);
+    }
+    .term-dots { display: flex; gap: 6px; }
+    .tdot { width: 10px; height: 10px; border-radius: 50%; }
+    .tdot.r { background: var(--ruby); }
+    .tdot.y { background: var(--gold); }
+    .tdot.g { background: var(--green); }
+    .term-ttl {
+      font-size: .7rem; color: var(--white-a60);
+      font-family: 'Courier New', monospace; letter-spacing: .04em;
+    }
+    .term-body {
+      padding: 22px 24px; font-family: 'Courier New', monospace;
+      font-size: .8rem; line-height: 2;
+    }
+    .tl { color: var(--white-a60); opacity: 0; transition: opacity .25s ease; }
+    .tl.vis { opacity: 1; }
+    .tl.gold-line { color: var(--gold); }
+    .tl.green-line { color: var(--green); }
+    .mn { color: var(--white); }
+    .cursor {
+      display: inline-block; width: 8px; height: 14px; background: var(--gold);
+      vertical-align: middle; animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ===================== PROBLEM ===================== */
+    #problem { padding: 96px 0; position: relative; }
+    .sec-eye {
+      font-size: .7rem; font-weight: 500; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--ruby); margin-bottom: 14px;
+    }
+    .sec-ttl {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.7rem, 2.8vw, 2.6rem);
+      font-weight: 800; letter-spacing: -.03em; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .sec-sub {
+      font-size: 1rem; color: var(--white-a60); max-width: 540px;
+      margin-bottom: 52px; line-height: 1.72;
+    }
+
+    .pain-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    }
+    .pain-card {
+      background: var(--bg-2); padding: 36px 28px;
+      border: 1px solid var(--white-a15);
+      transition: border-color var(--ease), background var(--ease);
+    }
+    .pain-card:first-child { border-radius: var(--r-md) 0 0 var(--r-md); }
+    .pain-card:last-child  { border-radius: 0 var(--r-md) var(--r-md) 0; }
+    .pain-card:hover { border-color: rgba(196,30,58,.35); background: rgba(196,30,58,.03); }
+    .pain-num {
+      font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800;
+      color: var(--ruby); opacity: .22; line-height: 1; margin-bottom: 14px;
+    }
+    .pain-ttl {
+      font-family: 'Syne', sans-serif; font-size: 1.05rem;
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .pain-txt { font-size: .88rem; color: var(--white-a60); line-height: 1.65; }
+
+    /* ===================== SOLUTION ===================== */
+    #solution { padding: 96px 0; }
+    .sol-head {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+      align-items: end; margin-bottom: 48px;
+    }
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .feat-card {
+      background: var(--bg-2); border: 1px solid var(--white-a15);
+      border-radius: var(--r-md); padding: 32px 26px;
+      position: relative; overflow: hidden;
+      transition: border-color var(--ease), transform .18s ease;
+    }
+    .feat-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--gold); transform: scaleX(0); transform-origin: left;
+      transition: transform .3s ease;
+    }
+    .feat-card:hover { border-color: var(--gold-a20); transform: translateY(-4px); }
+    .feat-card:hover::after { transform: scaleX(1); }
+    .feat-icon {
+      width: 44px; height: 44px; background: var(--gold-a15); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 20px;
+    }
+    .feat-ttl {
+      font-family: 'Syne', sans-serif; font-size: 1.05rem;
+      font-weight: 700; margin-bottom: 10px;
+    }
+    .feat-txt { font-size: .87rem; color: var(--white-a60); line-height: 1.65; margin-bottom: 20px; }
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .feat-list li {
+      font-size: .8rem; color: var(--white-a60);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .feat-list li::before { content: '→'; color: var(--gold); flex-shrink: 0; font-size: .72rem; margin-top: 2px; }
+
+    /* ===================== WAITLIST ===================== */
+    #waitlist { padding: 96px 0; position: relative; }
+    #waitlist::before {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(201,168,76,.055) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .wl-inner {
+      display: grid; grid-template-columns: 1fr 1.45fr; gap: 80px; align-items: start;
+    }
+    .wl-benefits { margin-top: 36px; display: flex; flex-direction: column; gap: 18px; }
+    .ben-item { display: flex; align-items: flex-start; gap: 14px; }
+    .ben-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+      margin-top: 7px; flex-shrink: 0;
+    }
+    .ben-txt { font-size: .9rem; color: var(--white-a60); line-height: 1.55; }
+    .ben-txt strong { color: var(--white); font-weight: 500; }
+
+    /* ===== FORM CARD ===== */
+    .form-card {
+      background: var(--bg-2); border: 1px solid var(--gold-a20);
+      border-radius: var(--r-lg); padding: 40px; position: relative;
+    }
+    .form-card::before {
+      content: ''; position: absolute; inset: -1px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(140deg, rgba(201,168,76,.12) 0%, transparent 55%);
+      pointer-events: none; z-index: 0;
+    }
+    .form-card > * { position: relative; z-index: 1; }
+
+    .f-sec-lbl {
+      font-size: .68rem; font-weight: 600; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--gold);
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 28px; margin-bottom: 14px;
+    }
+    .f-sec-lbl:first-child { margin-top: 0; }
+    .f-sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--white-a15); }
+
+    .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .f-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .f-group.full { grid-column: 1 / -1; }
+
+    label.f-label { font-size: .78rem; font-weight: 500; color: var(--white-a60); }
+
+    input[type="text"], input[type="email"], input[type="tel"], select {
+      background: var(--bg-3); border: 1px solid var(--white-a15);
+      border-radius: var(--r-sm); padding: 12px 14px;
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      transition: border-color var(--ease), box-shadow var(--ease);
+      outline: none; width: 100%;
+      -webkit-appearance: none; appearance: none;
+    }
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder,
+    input[type="tel"]::placeholder { color: rgba(245,240,232,.22); }
+    input:focus, select:focus {
+      border-color: rgba(201,168,76,.50);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.08);
+    }
+    input.err { border-color: rgba(196,30,58,.60) !important; box-shadow: 0 0 0 3px rgba(196,30,58,.08) !important; }
+    select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23F5F0E8' opacity='.4' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    select option { background: #1A1A1A; }
+
+    /* ===== CHECKLIST ===== */
+    .check-hint { font-size: .83rem; color: var(--white-a60); margin-bottom: 12px; }
+    .check-hint span { opacity: .5; }
+    .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+    .chk-item {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      padding: 11px 14px; border-radius: var(--r-sm);
+      border: 1px solid var(--white-a15);
+      transition: border-color var(--ease), background var(--ease);
+      user-select: none; -webkit-user-select: none;
+    }
+    .chk-item:hover { border-color: var(--gold-a20); }
+    .chk-item.on { border-color: rgba(201,168,76,.38); background: var(--gold-a08); }
+    .chk-box {
+      width: 18px; height: 18px; border-radius: 4px;
+      border: 1.5px solid var(--white-a15); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--ease);
+    }
+    .chk-item.on .chk-box { background: var(--gold); border-color: var(--gold); }
+    .chk-mark { display: none; color: var(--bg); font-size: 10px; font-weight: 800; }
+    .chk-item.on .chk-mark { display: block; }
+    .chk-lbl { font-size: .82rem; color: var(--white-a60); line-height: 1.3; }
+
+    /* ===== SUBMIT ===== */
+    .btn-submit {
+      width: 100%; background: var(--gold); color: var(--bg);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .97rem;
+      padding: 16px 24px; border-radius: var(--r-sm); border: none; cursor: pointer;
+      margin-top: 22px; letter-spacing: .01em;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform .15s ease, box-shadow .15s ease, opacity var(--ease);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(201,168,76,.30); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: .65; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+    .f-disclaimer { font-size: .72rem; color: var(--white-a60); text-align: center; margin-top: 10px; opacity: .55; }
+
+    /* ===== SUCCESS ===== */
+    .success-wrap { display: none; text-align: center; padding: 56px 24px; }
+    .success-icon {
+      width: 72px; height: 72px; margin: 0 auto 24px;
+      background: rgba(76,175,80,.10); border: 1px solid rgba(76,175,80,.28);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+    }
+    .success-ttl {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .success-sub { font-size: .95rem; color: var(--white-a60); line-height: 1.65; }
+    .success-badge {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;
+      background: var(--gold-a08); border: 1px solid var(--gold-a20);
+      border-radius: 100px; padding: 8px 20px;
+      font-size: .8rem; color: var(--gold); font-weight: 600;
+    }
+
+    /* ===================== FOOTER ===================== */
+    footer { border-top: 1px solid var(--white-a15); padding: 36px 0; }
+    .ft-inner { display: flex; align-items: center; justify-content: space-between; }
+    .ft-logo {
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--white);
+    }
+    .ft-logo span { color: var(--gold); }
+    .ft-tag { font-size: .74rem; color: var(--white-a60); margin-top: 3px; letter-spacing: .06em; }
+    .ft-right { font-size: .73rem; color: var(--white-a60); text-align: right; line-height: 1.7; }
+
+    /* ===================== SCROLL REVEAL ===================== */
+    .rv { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .rv.in { opacity: 1; transform: none; }
+    .rv.d1 { transition-delay: .1s; }
+    .rv.d2 { transition-delay: .2s; }
+    .rv.d3 { transition-delay: .3s; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 920px) {
+      .hero-grid   { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .pain-grid   { grid-template-columns: 1fr; }
+      .pain-card:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+      .pain-card:last-child  { border-radius: 0 0 var(--r-md) var(--r-md); }
+      .feat-grid   { grid-template-columns: 1fr; }
+      .sol-head    { grid-template-columns: 1fr; gap: 20px; }
+      .wl-inner    { grid-template-columns: 1fr; gap: 40px; }
+      .f-row       { grid-template-columns: 1fr; }
+      .checklist   { grid-template-columns: 1fr; }
+      .ft-inner    { flex-direction: column; gap: 20px; text-align: center; }
+      .ft-right    { text-align: center; }
+      .hero-stats  { gap: 22px; }
+      .nav-tag     { display: none; }
+    }
+    @media (max-width: 480px) {
+      .form-card { padding: 24px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rv { opacity: 1; transform: none; transition: none; }
+      .eyebrow-pulse, .cursor { animation: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">D1 <span>OS</span></a>
+    <span class="nav-tag">by D1 Consulting</span>
+    <a href="#waitlist" class="nav-cta">Entrar na lista →</a>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- COPY -->
+      <div class="hero-content">
+        <div class="eyebrow-pill">
+          <span class="eyebrow-pulse"></span>
+          Lançamento em breve
+        </div>
+        <h1>
+          O setor de marketing<br>
+          que sua empresa<br>
+          <span class="gold">nunca pôde contratar.</span>
+        </h1>
+        <p class="hero-sub">
+          CRM de atendimento com WhatsApp, automações inteligentes de resposta e IA para criar conteúdo — tudo numa plataforma feita para pequenas empresas que querem crescer de verdade.
+        </p>
+        <div class="hero-actions">
+          <a href="#waitlist" class="btn-primary">
+            Quero entrar na lista <span>→</span>
+          </a>
+          <span class="hero-note">Gratuito · Sem cartão</span>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="stat-val">3</div>
+            <div class="stat-lbl">Módulos integrados</div>
+          </div>
+          <div>
+            <div class="stat-val">1</div>
+            <div class="stat-lbl">Plataforma</div>
+          </div>
+          <div>
+            <div class="stat-val">∞</div>
+            <div class="stat-lbl">Potencial de resultado</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TERMINAL -->
+      <div class="hero-visual">
+        <div class="terminal">
+          <div class="term-head">
+            <div class="term-dots">
+              <div class="tdot r"></div>
+              <div class="tdot y"></div>
+              <div class="tdot g"></div>
+            </div>
+            <span class="term-ttl">d1-os — sistema v1.0</span>
+          </div>
+          <div class="term-body">
+            <div class="tl gold-line" id="tl0">$ iniciando D1 OS...</div>
+            <div class="tl" id="tl1">&nbsp;</div>
+            <div class="tl" id="tl2" style="color:var(--gold)">▶ carregando módulos:</div>
+            <div class="tl" id="tl3">&nbsp;</div>
+            <div class="tl" id="tl4">  <span class="mn">CRM Atendimento  </span>&nbsp;<span id="pb1"></span></div>
+            <div class="tl" id="tl5">  <span class="mn">WhatsApp Connect </span>&nbsp;<span id="pb2"></span></div>
+            <div class="tl" id="tl6">  <span class="mn">Automações       </span>&nbsp;<span id="pb3"></span></div>
+            <div class="tl" id="tl7">  <span class="mn">IA Content Engine</span>&nbsp;<span id="pb4"></span></div>
+            <div class="tl" id="tl8">&nbsp;</div>
+            <div class="tl green-line" id="tl9">✓ sistema pronto. bem-vindo ao D1 OS.</div>
+            <div class="tl" id="tl10">&nbsp;</div>
+            <div class="tl" id="tl11" style="color:rgba(245,240,232,.35)">$ <span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ PROBLEM ══════════════ -->
+<section id="problem">
+  <div class="container">
+    <div class="sec-eye rv">O diagnóstico</div>
+    <h2 class="sec-ttl rv">Você reconhece<br>algum desses cenários?</h2>
+    <p class="sec-sub rv">Ferramentas separadas, times sobrecarregados e dinheiro mal investido. O dia a dia de 9 em 10 pequenas empresas.</p>
+
+    <div class="pain-grid rv">
+      <div class="pain-card">
+        <div class="pain-num">01</div>
+        <div class="pain-ttl">Conteúdo sem consistência</div>
+        <p class="pain-txt">Semanas sem postar porque falta tempo, ideia ou dinheiro para contratar alguém. A concorrência avança enquanto seu perfil silencia.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">02</div>
+        <div class="pain-ttl">Leads que somem no WhatsApp</div>
+        <p class="pain-txt">Clientes mandam mensagem, esperam resposta e compram do concorrente. Atendimento lento é sinônimo de receita que vai embora.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">03</div>
+        <div class="pain-ttl">Ferramentas demais, resultado de menos</div>
+        <p class="pain-txt">Uma pra agendar, outra pra responder, outra pra criar arte. Custo alto, integração zero e resultado abaixo do esperado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ SOLUTION ══════════════ -->
+<section id="solution">
+  <div class="container">
+    <div class="sol-head">
+      <div>
+        <div class="sec-eye rv">A solução</div>
+        <h2 class="sec-ttl rv">Um OS. Tudo dentro.<br><span class="gold">Zero complicação.</span></h2>
+      </div>
+      <p class="sec-sub rv" style="margin-bottom:0">
+        D1 OS reúne num único lugar tudo o que sua empresa precisa para atrair, atender e fidelizar clientes — sem precisar de uma equipe de marketing de 10 pessoas.
+      </p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card rv d1">
+        <div class="feat-icon">💬</div>
+        <div class="feat-ttl">CRM de Atendimento</div>
+        <p class="feat-txt">Inbox unificado do WhatsApp para toda sua equipe — em tempo real, sem perder nenhuma conversa.</p>
+        <ul class="feat-list">
+          <li>Inbox WhatsApp em tempo real</li>
+          <li>Atribuição por atendente</li>
+          <li>Histórico completo do contato</li>
+          <li>Tags e segmentação de clientes</li>
+        </ul>
+      </div>
+      <div class="feat-card rv d2">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-ttl">Automações Inteligentes</div>
+        <p class="feat-txt">Respostas, fluxos de qualificação e follow-up que trabalham por você — mesmo fora do horário.</p>
+        <ul class="feat-list">
+          <li>Boas-vindas e respostas fora do horário</li>
+          <li>Fluxos por palavra-chave</li>
+          <li>Qualificação de leads automática</li>
+          <li>Follow-up e lembretes</li>
+        </ul>
+      </div>
+      <div class="feat-card rv d3">
+        <div class="feat-icon">🤖</div>
+        <div class="feat-ttl">IA Content Engine</div>
+        <p class="feat-txt">Gere posts, legendas e copies para qualquer rede social em segundos — com IA calibrada pro seu nicho.</p>
+        <ul class="feat-list">
+          <li>Posts e legendas com IA</li>
+          <li>Adaptação por plataforma e tom</li>
+          <li>Copy para anúncios patrocinados</li>
+          <li>Banco de conteúdo gerado</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ WAITLIST FORM ══════════════ -->
+<section id="waitlist">
+  <div class="container">
+    <div class="wl-inner">
+
+      <!-- INFO LADO ESQUERDO -->
+      <div>
+        <div class="sec-eye rv">Lista de espera</div>
+        <h2 class="sec-ttl rv">Seja um dos<br>primeiros a ter<br><span class="gold">acesso.</span></h2>
+        <p class="sec-sub rv" style="margin-bottom:0">
+          Os primeiros inscritos recebem condições exclusivas de lançamento e acesso prioritário à plataforma.
+        </p>
+        <div class="wl-benefits rv">
+          <div class="ben-item">
+            <div class="ben-dot"></div>
+            <p class="ben-txt"><strong>Acesso antecipado</strong> — configure tudo antes da abertura ao público.</p>
+          </div>
+          <div class="ben-item">
+            <div class="ben-dot"></div>
+            <p class="ben-txt"><strong>Preço de fundador</strong> — desconto exclusivo só para a lista de espera.</p>
+          </div>
+          <div class="ben-item">
+            <div class="ben-dot"></div>
+            <p class="ben-txt"><strong>Onboarding personalizado</strong> — a equipe D1 cuida da sua configuração inicial.</p>
+          </div>
+          <div class="ben-item">
+            <div class="ben-dot"></div>
+            <p class="ben-txt"><strong>Sem compromisso agora</strong> — garanta seu lugar sem cartão de crédito.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM CARD -->
+      <div class="form-card rv">
+
+        <!-- FORM -->
+        <div id="form-body">
+
+          <div class="f-sec-lbl">Empresa</div>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label class="f-label" for="f-company">Nome da empresa *</label>
+              <input type="text" id="f-company" placeholder="Ex: Restaurante Sabor">
+            </div>
+            <div class="f-group">
+              <label class="f-label" for="f-niche">Segmento *</label>
+              <select id="f-niche">
+                <option value="" disabled selected>Selecione</option>
+                <option>Restaurante / Alimentação</option>
+                <option>Clínica / Saúde e Bem-estar</option>
+                <option>Loja / Varejo</option>
+                <option>Serviços profissionais</option>
+                <option>Educação / Cursos</option>
+                <option>Beleza / Estética</option>
+                <option>Agência / Marketing</option>
+                <option>Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label class="f-label" for="f-city">Cidade *</label>
+              <input type="text" id="f-city" placeholder="Ex: Porto Alegre">
+            </div>
+            <div class="f-group">
+              <label class="f-label" for="f-size">Tamanho da equipe</label>
+              <select id="f-size">
+                <option value="" disabled selected>Selecione</option>
+                <option>Só eu (MEI / autônomo)</option>
+                <option>2 a 5 pessoas</option>
+                <option>6 a 20 pessoas</option>
+                <option>20+ pessoas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="f-sec-lbl">Contato</div>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label class="f-label" for="f-name">Seu nome *</label>
+              <input type="text" id="f-name" placeholder="Nome completo">
+            </div>
+            <div class="f-group">
+              <label class="f-label" for="f-wa">WhatsApp *</label>
+              <input type="tel" id="f-wa" placeholder="(51) 99999-9999">
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label class="f-label" for="f-email">E-mail *</label>
+            <input type="email" id="f-email" placeholder="voce@empresa.com.br">
+          </div>
+
+          <div class="f-sec-lbl">Diagnóstico rápido</div>
+
+          <p class="check-hint">Sua empresa já possui: <span>(marque os que se aplicam)</span></p>
+
+          <div class="checklist" id="checklist">
+            <div class="chk-item" data-val="site" onclick="toggleChk(this)" role="checkbox" aria-checked="false" tabindex="0">
+              <div class="chk-box"><span class="chk-mark">✓</span></div>
+              <span class="chk-lbl">Site próprio</span>
+            </div>
+            <div class="chk-item" data-val="crm" onclick="toggleChk(this)" role="checkbox" aria-checked="false" tabindex="0">
+              <div class="chk-box"><span class="chk-mark">✓</span></div>
+              <span class="chk-lbl">CRM ou sistema de atendimento</span>
+            </div>
+            <div class="chk-item" data-val="marketing" onclick="toggleChk(this)" role="checkbox" aria-checked="false" tabindex="0">
+              <div class="chk-box"><span class="chk-mark">✓</span></div>
+              <span class="chk-lbl">Estratégia de marketing digital</span>
+            </div>
+            <div class="chk-item" data-val="automation" onclick="toggleChk(this)" role="checkbox" aria-checked="false" tabindex="0">
+              <div class="chk-box"><span class="chk-mark">✓</span></div>
+              <span class="chk-lbl">Atendimento automatizado</span>
+            </div>
+          </div>
+
+          <button class="btn-submit" id="submit-btn" onclick="handleSubmit()">
+            <span id="submit-txt">Quero entrar na lista de espera →</span>
+          </button>
+          <p class="f-disclaimer">Sem spam. Apenas atualizações sobre o lançamento do D1 OS.</p>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-wrap" id="success-wrap">
+          <div class="success-icon">✅</div>
+          <h3 class="success-ttl">Você está na lista!</h3>
+          <p class="success-sub">
+            Entraremos em contato pelo WhatsApp assim que seu acesso estiver pronto.<br>Fique de olho na sua caixa de entrada.
+          </p>
+          <div class="success-badge">
+            <span>🔒</span> Posição garantida na lista de espera
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="container ft-inner">
+    <div>
+      <div class="ft-logo">D1 <span>OS</span></div>
+      <div class="ft-tag">Plano · Ação · Resultado</div>
+    </div>
+    <div class="ft-right">
+      <div>© 2026 D1 Consulting. Todos os direitos reservados.</div>
+      <div style="opacity:.45;margin-top:2px">d1consulting.com.br</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+  /* ── TERMINAL ANIMATION ── */
+  const show = (id, ms) => setTimeout(() => { const el=document.getElementById(id); if(el) el.classList.add('vis'); }, ms);
+  const bars = { pb1:12, pb2:12, pb3:12, pb4:12 };
+
+  const fillBar = (id, delay) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      let n = 0;
+      const fill = '████████████';
+      const iv = setInterval(() => {
+        el.textContent = fill.slice(0, n + 1);
+        n++;
+        if (n >= fill.length) {
+          clearInterval(iv);
+          el.innerHTML = fill + ' <span style="color:var(--green)">✓</span>';
+        }
+      }, 38);
+    }, delay);
+  };
+
+  show('tl0',  200); show('tl1',  700); show('tl2',  950);
+  show('tl3', 1200); show('tl4', 1350); show('tl5', 1900);
+  show('tl6', 2440); show('tl7', 2980); show('tl8', 3500);
+  show('tl9', 3700); show('tl10',3950); show('tl11',4150);
+
+  fillBar('pb1', 1450); fillBar('pb2', 1990);
+  fillBar('pb3', 2540); fillBar('pb4', 3080);
+
+  /* ── SCROLL REVEAL ── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+  /* ── CHECKLIST TOGGLE ── */
+  function toggleChk(el) {
+    el.classList.toggle('on');
+    el.setAttribute('aria-checked', String(el.classList.contains('on')));
+  }
+  document.querySelectorAll('.chk-item').forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleChk(el); } });
+  });
+
+  /* ── PHONE MASK ── */
+  document.getElementById('f-wa').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    else if (v.length) v = `(${v}`;
+    this.value = v;
+  });
+
+  /* ── FORM SUBMIT ── */
+  function markErr(id) {
+    const el = document.getElementById(id);
+    el.classList.add('err');
+    el.addEventListener('input', () => el.classList.remove('err'), { once: true });
+    el.addEventListener('change', () => el.classList.remove('err'), { once: true });
+    return false;
+  }
+
+  function handleSubmit() {
+    const reqs = [
+      { id: 'f-company', check: v => v.trim().length > 0 },
+      { id: 'f-niche',   check: v => v.length > 0 },
+      { id: 'f-city',    check: v => v.trim().length > 0 },
+      { id: 'f-name',    check: v => v.trim().length > 0 },
+      { id: 'f-wa',      check: v => v.replace(/\D/g,'').length >= 10 },
+      { id: 'f-email',   check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+    ];
+
+    let ok = true;
+    reqs.forEach(r => {
+      const el = document.getElementById(r.id);
+      if (!r.check(el.value)) { markErr(r.id); ok = false; }
+    });
+    if (!ok) return;
+
+    const btn = document.getElementById('submit-btn');
+    const txt = document.getElementById('submit-txt');
+    btn.disabled = true;
+    txt.textContent = 'Enviando...';
+
+    const payload = {
+      company:    document.getElementById('f-company').value,
+      niche:      document.getElementById('f-niche').value,
+      city:       document.getElementById('f-city').value,
+      size:       document.getElementById('f-size').value,
+      name:       document.getElementById('f-name').value,
+      whatsapp:   document.getElementById('f-wa').value,
+      email:      document.getElementById('f-email').value,
+      hasItems:   Array.from(document.querySelectorAll('.chk-item.on')).map(el => el.dataset.val),
+    };
+
+    /* 🔌 INTEGRAÇÃO FUTURA:
+       fetch('/api/waitlist', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(payload)
+       });
+    */
+    console.log('[D1 OS] Waitlist entry:', payload);
+
+    setTimeout(() => {
+      document.getElementById('form-body').style.display = 'none';
+      const s = document.getElementById('success-wrap');
+      s.style.display = 'block';
+      s.style.animation = 'fadeIn .4s ease';
+    }, 1100);
+  }
+
+  /* ── INJECT KEYFRAME ── */
+  document.head.insertAdjacentHTML('beforeend',
+    `<style>@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}</style>`
+  );
+</script>
+</body>
+</html>
