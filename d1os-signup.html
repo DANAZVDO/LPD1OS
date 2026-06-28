@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar conta grátis — D1 OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:    #07070F; --bg2: #0C0C1E; --bg3: #101028; --bg4: #14143A;
+      --bd:    #1C1C38; --bd2: #28285A; --bd3: #383870;
+      --v:     #7C3AED; --v2: #9B72EF; --v3: #C4A8FF;
+      --vdim:  rgba(124,58,237,0.10); --vglow: rgba(124,58,237,0.22);
+      --t1:    #EEEEFF; --t2: #9090B8; --t3: #48487A;
+      --green: #22C55E; --red: #FF6870;
+    }
+    html { height: 100%; }
+    body {
+      min-height: 100vh; background: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT BRAND PANEL ── */
+    .brand-panel {
+      background: var(--bg2);
+      border-right: 1px solid var(--bd);
+      padding: 48px 52px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden; min-height: 100vh;
+    }
+    .brand-panel::before {
+      content: ''; position: absolute;
+      bottom: -100px; left: -100px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .brand-panel::after {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background-image: radial-gradient(rgba(124,58,237,0.06) 1px, transparent 1px);
+      background-size: 24px 24px; pointer-events: none;
+    }
+    .brand-inner { position: relative; z-index: 1; }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--t1); text-decoration: none;
+      display: inline-block; margin-bottom: 52px;
+    }
+    .brand-logo span { color: var(--v2); }
+
+    .brand-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; font-weight: 700; letter-spacing: -1px;
+      line-height: 1.15; color: var(--t1); margin-bottom: 14px;
+    }
+    .brand-sub {
+      font-size: 16px; color: var(--t2); line-height: 1.65; margin-bottom: 40px;
+    }
+
+    .brand-benefits { display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px; }
+    .benefit-item {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .benefit-check {
+      width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; margin-top: 1px;
+    }
+    .benefit-text { font-size: 15px; color: var(--t2); line-height: 1.5; }
+    .benefit-text strong { color: var(--t1); }
+
+    .brand-quote {
+      background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2);
+      border-left: 3px solid var(--v); border-radius: 10px; padding: 18px 20px;
+      position: relative; z-index: 1;
+    }
+    .quote-text {
+      font-size: 14px; color: var(--t2); line-height: 1.65;
+      font-style: italic; margin-bottom: 12px;
+    }
+    .quote-author {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .quote-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--v); display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .quote-name { font-size: 13px; font-weight: 600; color: var(--t1); }
+    .quote-role { font-size: 11px; color: var(--t3); }
+
+    .brand-stats {
+      display: flex; gap: 24px; margin-top: 32px;
+      position: relative; z-index: 1;
+    }
+    .stat-item { font-size: 12px; color: var(--t3); }
+    .stat-item strong { display: block; font-size: 20px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+    .stat-divider { width: 1px; background: var(--bd); }
+
+    /* ── RIGHT FORM PANEL ── */
+    .form-panel {
+      padding: 48px 52px; overflow-y: auto;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .form-inner { max-width: 420px; width: 100%; margin: 0 auto; }
+
+    /* Plan badge */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--vdim); border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 100px; padding: 6px 14px; margin-bottom: 28px;
+      font-size: 13px; font-weight: 600; color: var(--v3);
+    }
+    .plan-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+    }
+
+    .form-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px; font-weight: 700; color: var(--t1);
+      letter-spacing: -0.5px; margin-bottom: 6px;
+    }
+    .form-sub { font-size: 14px; color: var(--t3); margin-bottom: 30px; }
+
+    /* Fields */
+    .field-group { margin-bottom: 16px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field-label {
+      display: block; font-size: 13px; font-weight: 500; color: var(--t2); margin-bottom: 6px;
+    }
+    .input-wrap { position: relative; }
+    .input-field {
+      width: 100%;
+      background: var(--bg3); border: 1px solid var(--bd);
+      border-radius: 9px; padding: 12px 14px;
+      font-size: 15px; color: var(--t1); font-family: 'Inter', sans-serif;
+      transition: border-color .2s, box-shadow .2s; -webkit-appearance: none;
+    }
+    .input-field::placeholder { color: var(--t3); }
+    .input-field:focus {
+      outline: none; border-color: var(--v);
+      box-shadow: 0 0 0 3px var(--vdim);
+    }
+    .input-field.error { border-color: var(--red); }
+    .has-toggle { padding-right: 44px; }
+    .toggle-pass {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--t3); font-size: 15px; padding: 4px; line-height: 1;
+    }
+    .toggle-pass:hover { color: var(--t2); }
+
+    select.input-field {
+      cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%239090B8' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+    select.input-field option { background: #101028; color: #EEEEFF; }
+
+    /* Terms */
+    .terms-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin: 20px 0 22px;
+    }
+    .checkbox {
+      width: 16px; height: 16px; margin-top: 2px; cursor: pointer;
+      accent-color: var(--v); flex-shrink: 0;
+    }
+    .terms-text {
+      font-size: 13px; color: var(--t3); line-height: 1.5; cursor: pointer;
+    }
+    .terms-text a { color: var(--v3); text-decoration: none; }
+    .terms-text a:hover { color: var(--v2); }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%; padding: 15px;
+      background: var(--v); color: #fff; border: none;
+      border-radius: 10px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .btn-submit:hover:not(:disabled) {
+      background: var(--v2); transform: translateY(-1px);
+      box-shadow: 0 10px 30px var(--vglow);
+    }
+    .btn-submit:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+    .spinner {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; animation: spin .7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Footer */
+    .form-footer {
+      text-align: center; font-size: 14px; color: var(--t3); margin-top: 20px;
+    }
+    .form-footer a {
+      color: var(--v3); text-decoration: none; font-weight: 500;
+    }
+    .form-footer a:hover { color: var(--v2); }
+
+    /* Error banner */
+    .error-banner {
+      background: rgba(255,104,112,0.10); border: 1px solid rgba(255,104,112,0.25);
+      border-radius: 8px; padding: 11px 14px; font-size: 13px; color: var(--red);
+      margin-bottom: 16px; display: none;
+    }
+
+    /* ── SUCCESS STATE ── */
+    .success-state { display: none; text-align: center; }
+    .success-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin: 0 auto 24px;
+    }
+    .success-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px; font-weight: 700; color: var(--t1);
+      letter-spacing: -0.5px; margin-bottom: 12px;
+    }
+    .success-text {
+      font-size: 15px; color: var(--t2); line-height: 1.7; margin-bottom: 28px;
+    }
+    .btn-whatsapp {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25D366; color: #fff; border: none;
+      border-radius: 10px; padding: 14px 26px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600;
+      text-decoration: none; transition: opacity .2s, transform .15s;
+      margin-bottom: 16px; width: 100%; justify-content: center;
+    }
+    .btn-whatsapp:hover { opacity: .9; transform: translateY(-1px); }
+
+    .success-note {
+      font-size: 12px; color: var(--t3); line-height: 1.6;
+      background: var(--bg3); border: 1px solid var(--bd);
+      border-radius: 8px; padding: 12px 14px; text-align: left; margin-top: 12px;
+    }
+    .success-note strong { color: var(--t2); }
+
+    /* Form visible/hidden */
+    .form-content.hidden { display: none; }
+
+    /* Password strength indicator */
+    .pass-strength {
+      display: flex; gap: 4px; margin-top: 7px;
+    }
+    .strength-bar {
+      height: 3px; flex: 1; border-radius: 2px; background: var(--bd);
+      transition: background .3s;
+    }
+    .strength-bar.weak { background: var(--red); }
+    .strength-bar.medium { background: var(--amber, #F59E0B); }
+    .strength-bar.strong { background: var(--green); }
+    .pass-label { font-size: 11px; color: var(--t3); margin-top: 4px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .form-panel { padding: 32px 24px; min-height: 100vh; justify-content: flex-start; padding-top: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── LEFT: BRAND PANEL ─── -->
+  <div class="brand-panel">
+    <div class="brand-inner">
+      <a href="d1os-landing.html" class="brand-logo">D1 <span>OS</span></a>
+
+      <h1 class="brand-headline">
+        Conteúdo criado por IA.<br>
+        Clientes atendidos<br>
+        pelo WhatsApp.
+      </h1>
+      <p class="brand-sub">
+        Uma plataforma integrada para PMEs que querem crescer sem contratar uma agência.
+      </p>
+
+      <div class="brand-benefits">
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <div class="benefit-text"><strong>14 dias grátis</strong> — sem precisar de cartão de crédito</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <div class="benefit-text"><strong>Setup completo em 5 minutos</strong> — informe o nicho e comece a gerar conteúdo</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <div class="benefit-text"><strong>Suporte via WhatsApp</strong> incluso em todos os planos</div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-check">✓</div>
+          <div class="benefit-text"><strong>Cancele quando quiser</strong> — sem multa, sem burocracia</div>
+        </div>
+      </div>
+
+      <div class="brand-quote">
+        <p class="quote-text">
+          "Em 3 semanas usando o D1 OS, o alcance do meu Instagram cresceu 240%. E parei de gastar horas toda semana tentando criar legenda."
+        </p>
+        <div class="quote-author">
+          <div class="quote-avatar">C</div>
+          <div>
+            <div class="quote-name">Carlos Santos</div>
+            <div class="quote-role">Academia FitLife — São Paulo, SP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-stats">
+      <div class="stat-item">
+        <strong>5 seg</strong>por geração de conteúdo
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <strong>3 versões</strong>por requisição
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <strong>R$ 497</strong>para começar
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT: FORM PANEL ─── -->
+  <div class="form-panel">
+    <div class="form-inner">
+
+      <!-- Form content -->
+      <div class="form-content" id="formContent">
+
+        <div class="plan-badge">
+          <span class="plan-badge-dot"></span>
+          <span id="planLabel">Pro — R$ 797/mês</span>
+          <span style="color:var(--t3);font-weight:400">· 14 dias grátis</span>
+        </div>
+
+        <h1 class="form-title">Criar sua conta</h1>
+        <p class="form-sub">14 dias sem cobrar nada. Depois, apenas o plano escolhido.</p>
+
+        <div class="error-banner" id="errorBanner">
+          Preencha todos os campos obrigatórios para continuar.
+        </div>
+
+        <form id="signupForm" novalidate>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="firstName">Nome</label>
+              <input class="input-field" type="text" id="firstName" placeholder="João" autocomplete="given-name">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="lastName">Sobrenome</label>
+              <input class="input-field" type="text" id="lastName" placeholder="Silva" autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="email">E-mail profissional</label>
+            <input class="input-field" type="email" id="email" placeholder="joao@suaempresa.com.br" autocomplete="email">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="password">Crie uma senha</label>
+            <div class="input-wrap">
+              <input class="input-field has-toggle" type="password" id="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+              <button type="button" class="toggle-pass" id="toggleBtn">👁</button>
+            </div>
+            <div class="pass-strength">
+              <div class="strength-bar" id="bar1"></div>
+              <div class="strength-bar" id="bar2"></div>
+              <div class="strength-bar" id="bar3"></div>
+              <div class="strength-bar" id="bar4"></div>
+            </div>
+            <div class="pass-label" id="passLabel"></div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="company">Nome do negócio</label>
+            <input class="input-field" type="text" id="company" placeholder="Ex: Academia FitLife" autocomplete="organization">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="niche">Nicho do seu negócio</label>
+            <select class="input-field" id="niche">
+              <option value="">Selecione o nicho...</option>
+              <option>Academia / Pilates / CrossFit</option>
+              <option>Restaurante / Bar / Café / Delivery</option>
+              <option>Clínica Médica / Consultório</option>
+              <option>Odontologia / Clínica Odontológica</option>
+              <option>Estética / Salão de Beleza / Barbearia</option>
+              <option>Moda / Boutique / Loja de Roupas</option>
+              <option>Pet Shop / Clínica Veterinária</option>
+              <option>Escola / Cursos / Treinamentos</option>
+              <option>Imobiliária / Construção</option>
+              <option>Varejo / E-commerce / Loja Online</option>
+              <option>Advocacia / Contabilidade / Jurídico</option>
+              <option>Agência de Marketing / Comunicação</option>
+              <option>Tecnologia / Software / SaaS</option>
+              <option>Saúde / Nutrição / Bem-estar</option>
+              <option>Outro</option>
+            </select>
+          </div>
+
+          <div class="terms-row">
+            <input type="checkbox" class="checkbox" id="terms">
+            <label class="terms-text" for="terms">
+              Concordo com os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a> do D1 OS
+            </label>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <div class="spinner" id="spinner"></div>
+            <span id="submitText">Criar conta e começar grátis →</span>
+          </button>
+        </form>
+
+        <p class="form-footer" style="margin-top:24px">
+          Já tem uma conta? <a href="d1os-login.html">Entrar</a>
+        </p>
+
+        <a href="d1os-landing.html" style="display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--t3);text-decoration:none;">
+          ← Voltar para o site
+        </a>
+      </div>
+
+      <!-- Success state -->
+      <div class="success-state" id="successState">
+        <div class="success-icon">🎉</div>
+        <h2 class="success-title">Conta criada!</h2>
+        <p class="success-text">
+          Seus 14 dias grátis estão confirmados. Um especialista da D1 OS entrará em contato pelo WhatsApp nas próximas horas para ativar seu acesso e fazer o setup do seu negócio.
+        </p>
+        <a id="waLink" href="https://wa.me/5551994798139" class="btn-whatsapp" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Falar com especialista pelo WhatsApp
+        </a>
+        <div class="success-note">
+          <strong>O que acontece agora:</strong><br>
+          1. Você receberá um e-mail de confirmação<br>
+          2. Nosso especialista fará o setup do seu negócio<br>
+          3. Em até 24h, seu Content Engine e CRM estarão prontos
+        </div>
+        <p style="margin-top:20px">
+          <a href="d1os-landing.html" style="color:var(--t3);font-size:13px;text-decoration:none">← Voltar para o site</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ── READ PLAN FROM URL PARAM ── */
+    const planMap = {
+      starter: { label: 'Starter — R$ 497/mês', msg: 'Plano Starter — 30 conteúdos/mês' },
+      pro:     { label: 'Pro — R$ 797/mês',     msg: 'Plano Pro — 100 conteúdos/mês'   },
+      agencia: { label: 'Agência — R$ 1.197/mês', msg: 'Plano Agência — 300 conteúdos/mês' },
+    };
+    const params = new URLSearchParams(window.location.search);
+    const planKey = params.get('plan') || 'pro';
+    const plan = planMap[planKey] || planMap['pro'];
+
+    document.getElementById('planLabel').textContent = plan.label;
+
+    /* ── PASSWORD TOGGLE ── */
+    let passVisible = false;
+    document.getElementById('toggleBtn').addEventListener('click', () => {
+      passVisible = !passVisible;
+      document.getElementById('password').type = passVisible ? 'text' : 'password';
+      document.getElementById('toggleBtn').textContent = passVisible ? '🙈' : '👁';
+    });
+
+    /* ── PASSWORD STRENGTH ── */
+    document.getElementById('password').addEventListener('input', function() {
+      const v = this.value;
+      const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+      const label = document.getElementById('passLabel');
+
+      bars.forEach(b => { b.className = 'strength-bar'; });
+
+      if (!v) { label.textContent = ''; return; }
+
+      let score = 0;
+      if (v.length >= 8)  score++;
+      if (v.length >= 12) score++;
+      if (/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+      if (/[^A-Za-z0-9]/.test(v)) score++;
+
+      const levels = [
+        { cls: 'weak',   text: 'Senha fraca',   color: '#FF6870' },
+        { cls: 'weak',   text: 'Senha fraca',   color: '#FF6870' },
+        { cls: 'medium', text: 'Senha razoável', color: '#F59E0B' },
+        { cls: 'strong', text: 'Senha forte ✓',  color: '#22C55E' },
+        { cls: 'strong', text: 'Senha forte ✓',  color: '#22C55E' },
+      ];
+      const lvl = levels[score] || levels[0];
+
+      for (let i = 0; i <= score && i < bars.length; i++) {
+        bars[i].classList.add(lvl.cls);
+      }
+      label.textContent = lvl.text;
+      label.style.color = lvl.color;
+    });
+
+    /* ── FORM SUBMISSION ── */
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner   = document.getElementById('spinner');
+    const submitTxt = document.getElementById('submitText');
+    const errorBanner  = document.getElementById('errorBanner');
+    const formContent  = document.getElementById('formContent');
+    const successState = document.getElementById('successState');
+
+    function setLoading(on) {
+      submitBtn.disabled = on;
+      spinner.style.display = on ? 'block' : 'none';
+      submitTxt.textContent  = on ? 'Criando sua conta…' : 'Criar conta e começar grátis →';
+    }
+
+    function showError(msg) {
+      errorBanner.textContent  = msg;
+      errorBanner.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showSuccess(name, email) {
+      // Update WA link with pre-filled message
+      const msg = encodeURIComponent(
+        `Olá! Acabei de criar minha conta no D1 OS.\n\nNome: ${name}\nE-mail: ${email}\nPlano: ${plan.msg}\n\nGostaria de ativar meu acesso!`
+      );
+      document.getElementById('waLink').href = `https://wa.me/5551994798139?text=${msg}`;
+      formContent.classList.add('hidden');
+      successState.style.display = 'block';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBanner.style.display = 'none';
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
+      const company   = document.getElementById('company').value.trim();
+      const niche     = document.getElementById('niche').value;
+      const terms     = document.getElementById('terms').checked;
+
+      // Validation
+      if (!firstName || !lastName) { showError('Informe seu nome completo.'); return; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Informe um e-mail válido.'); return; }
+      if (password.length < 8) { showError('A senha precisa ter pelo menos 8 caracteres.'); return; }
+      if (!company) { showError('Informe o nome do seu negócio.'); return; }
+      if (!niche) { showError('Selecione o nicho do seu negócio.'); return; }
+      if (!terms) { showError('Você precisa aceitar os Termos de Uso para continuar.'); return; }
+
+      setLoading(true);
+      // Simulate API call
+      await new Promise(r => setTimeout(r, 2000));
+      setLoading(false);
+      showSuccess(`${firstName} ${lastName}`, email);
+    });
+
+    // Clear errors on input
+    document.querySelectorAll('.input-field').forEach(el => {
+      el.addEventListener('input', () => { errorBanner.style.display = 'none'; });
+    });
+  </script>
+</body>
+</html>
