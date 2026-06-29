@@ -43,7 +43,7 @@
 
     /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 38px; left: 0; right: 0; z-index: 100;
       padding: 0 5%;
       height: 68px;
       display: flex; align-items: center; justify-content: space-between;
@@ -89,7 +89,7 @@
     /* ── HERO ── */
     #hero {
       min-height: 100vh;
-      padding: 120px 5% 80px;
+      padding: 158px 5% 80px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 60px;
@@ -567,9 +567,46 @@
       .comparison-table { font-size: 12px; }
       .comparison-table th, .comparison-table td { padding: 10px 12px; }
     }
+    /* ── URGENCY BAR ── */
+    .urgency-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 38px; background: var(--v);
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      font-size: 13px; font-weight: 500; color: #fff; padding: 0 5%;
+    }
+    .urgency-pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); flex-shrink: 0;
+      box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
+      animation: urgPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes urgPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70%  { box-shadow: 0 0 0 7px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    .urgency-bar a {
+      color: #fff; font-weight: 700; text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.5);
+      transition: border-color .2s;
+    }
+    .urgency-bar a:hover { border-color: #fff; }
+    .urgency-vagas {
+      background: rgba(255,255,255,0.18); border-radius: 4px;
+      padding: 2px 9px; font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
   </style>
 </head>
 <body>
+
+<!-- ─────────────────────── URGENCY BAR ─────────────────────── -->
+<div class="urgency-bar">
+  <span class="urgency-pulse"></span>
+  <span><strong>Oferta limitada:</strong> apenas <span class="urgency-vagas">7 vagas</span> disponíveis esta semana</span>
+  <span style="color:rgba(255,255,255,0.6)">·</span>
+  <span>5 dias grátis · sem cartão de crédito</span>
+  <a href="d1os-signup.html">Garantir minha vaga →</a>
+</div>
 
 <!-- ─────────────────────── NAV ─────────────────────── -->
 <nav>
@@ -603,7 +640,7 @@
     </p>
     <div class="hero-ctas">
       <a href="d1os-signup.html" class="btn-hero">
-        <span>Começar 14 dias grátis</span>
+        <span>Começar 5 dias grátis</span>
         <span>→</span>
       </a>
       <a href="#produto" class="btn-outline">Ver como funciona</a>
@@ -618,7 +655,7 @@
       </div>
       <div class="proof-divider"></div>
       <div class="proof-item">
-        <strong>R$ 497</strong>para começar
+        <strong>R$ 397</strong>para começar
       </div>
     </div>
   </div>
@@ -927,7 +964,7 @@
       </tr>
       <tr>
         <td style="color:var(--t3);font-size:13px">Preço a partir de</td>
-        <td class="highlight" style="color:var(--v3);font-weight:700">R$ 497/mês</td>
+        <td class="highlight" style="color:var(--v3);font-weight:700">R$ 397/mês</td>
         <td style="color:var(--t3)">R$ 699/mês</td>
         <td style="color:var(--t3)">R$ 1.600/mês</td>
         <td style="color:var(--t3)">R$ 100/mês</td>
@@ -942,16 +979,16 @@
   <div class="text-center mx-auto" style="max-width:500px">
     <div class="section-eyebrow">Planos</div>
     <h2 class="section-title">Sem surpresa no bolso, sem contrato longo</h2>
-    <p class="section-sub" style="margin:0 auto">Cancele quando quiser. 14 dias grátis em todos os planos — sem precisar de cartão de crédito.</p>
+    <p class="section-sub" style="margin:0 auto">Cancele quando quiser. <strong style="color:var(--t1)">5 dias grátis</strong> em todos os planos, sem cartão de crédito. <span style="color:var(--red);font-weight:600">⚡ Vagas limitadas esta semana.</span></p>
   </div>
   <div class="pricing-grid">
     <!-- Starter -->
     <div class="pricing-card fade-up">
       <div class="plan-name">Starter</div>
-      <div class="plan-desc">Para quem está começando a estruturar o marketing</div>
+      <div class="plan-desc">Para quem está começando a estruturar o marketing digital</div>
       <div class="plan-price">
         <span class="currency">R$</span>
-        <span class="amount">497</span>
+        <span class="amount">397</span>
         <span class="period">/mês</span>
       </div>
       <ul class="plan-features">
@@ -963,7 +1000,7 @@
         <li class="disabled">LinkedIn e TikTok</li>
         <li class="disabled">Relatórios avançados</li>
       </ul>
-      <a href="d1os-signup.html?plan=starter" class="btn-plan btn-plan-outline">Começar grátis</a>
+      <a href="d1os-signup.html?plan=starter" class="btn-plan btn-plan-outline">Começar 5 dias grátis</a>
     </div>
 
     <!-- Pro (featured) -->
@@ -985,28 +1022,28 @@
         <li>Banco de conteúdo completo</li>
         <li class="disabled">Múltiplos WhatsApp</li>
       </ul>
-      <a href="d1os-signup.html?plan=pro" class="btn-plan btn-plan-filled">Começar grátis</a>
+      <a href="d1os-signup.html?plan=pro" class="btn-plan btn-plan-filled">Começar 5 dias grátis</a>
     </div>
 
-    <!-- Agência -->
+    <!-- Premium -->
     <div class="pricing-card fade-up">
-      <div class="plan-name">Agência</div>
-      <div class="plan-desc">Para agências e negócios com alto volume</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-desc">Sua agência de publicidade terceirizada, pelo preço de uma ferramenta</div>
       <div class="plan-price">
         <span class="currency">R$</span>
-        <span class="amount">1.197</span>
+        <span class="amount">1.597</span>
         <span class="period">/mês</span>
       </div>
       <ul class="plan-features">
-        <li>300 gerações de conteúdo/mês</li>
-        <li>2 números de WhatsApp</li>
-        <li>15 atendentes</li>
-        <li>Automações avançadas</li>
-        <li>Todas as plataformas</li>
-        <li>Banco de conteúdo completo</li>
-        <li>Relatórios de desempenho</li>
+        <li>Conteúdo ilimitado por mês</li>
+        <li>3 números de WhatsApp</li>
+        <li>Atendentes ilimitados</li>
+        <li>Estratégia mensal de conteúdo</li>
+        <li>Calendário editorial incluso</li>
+        <li>Gestão e otimização de campanhas</li>
+        <li>Relatório mensal de ROI</li>
       </ul>
-      <a href="d1os-signup.html?plan=agencia" class="btn-plan btn-plan-outline">Começar grátis</a>
+      <a href="d1os-signup.html?plan=premium" class="btn-plan btn-plan-outline">Começar 5 dias grátis</a>
     </div>
   </div>
 </section>
@@ -1015,13 +1052,13 @@
 <section id="cta">
   <div class="cta-box">
     <div class="section-eyebrow text-center">Pronto para começar?</div>
-    <h2 class="section-title text-center">14 dias de D1 OS.<br>Sem cartão. Sem contrato.</h2>
-    <p>Configure seu negócio em menos de 5 minutos e comece a gerar conteúdo profissional hoje mesmo.</p>
+    <h2 class="section-title text-center">5 dias grátis.<br><span style="color:var(--red)">Vagas se esgotando.</span></h2>
+    <p>Configure seu negócio em 5 minutos e comece a gerar conteúdo hoje. Restam apenas <strong style="color:var(--t1)">7 vagas</strong> com trial disponíveis nesta semana.</p>
     <a href="d1os-signup.html" class="btn-hero" style="margin: 0 auto; display:inline-flex">
-      <span>Criar minha conta grátis</span>
+      <span>Garantir minha vaga agora</span>
       <span>→</span>
     </a>
-    <div class="cta-note">Tem dúvidas? Fale com a gente pelo WhatsApp: <a href="https://wa.me/5551994798139" style="color:var(--v3);text-decoration:none">+55 51 99479-8139</a></div>
+    <div class="cta-note">Dúvidas antes de assinar? Fale com a gente: <a href="https://wa.me/5551994798139" style="color:var(--v3);text-decoration:none">+55 51 99479-8139</a></div>
   </div>
 </section>
 
